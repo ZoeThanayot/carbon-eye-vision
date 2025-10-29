@@ -1,8 +1,11 @@
+import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { CarbonCalculationResult } from '@/services/api';
-import { Download, Leaf, TrendingUp, FileText } from 'lucide-react';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { CarbonCalculationResult, getRun, RunData } from '@/services/api';
+import { Download, Leaf, TrendingUp, FileText, Database } from 'lucide-react';
+import { toast } from 'sonner';
 
 interface ResultsPanelProps {
   results: CarbonCalculationResult | null;
@@ -11,6 +14,27 @@ interface ResultsPanelProps {
 }
 
 const ResultsPanel = ({ results, isLoading, error }: ResultsPanelProps) => {
+  const [mrvData, setMrvData] = useState<RunData | null>(null);
+  const [showMrvModal, setShowMrvModal] = useState(false);
+  const [loadingMrv, setLoadingMrv] = useState(false);
+
+  const handleViewMrv = async () => {
+    if (!results?.run_id) return;
+    
+    setLoadingMrv(true);
+    try {
+      const data = await getRun(results.run_id);
+      setMrvData(data);
+      setShowMrvModal(true);
+      toast.success('MRV data loaded');
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to load MRV data';
+      toast.error(errorMessage);
+    } finally {
+      setLoadingMrv(false);
+    }
+  };
+
   if (isLoading) {
     return (
       <Card className="h-full">
@@ -140,9 +164,9 @@ const ResultsPanel = ({ results, isLoading, error }: ResultsPanelProps) => {
         </CardContent>
       </Card>
 
-      {/* Download Report */}
+      {/* Actions */}
       <Card>
-        <CardContent className="pt-6">
+        <CardContent className="pt-6 space-y-3">
           <Button 
             className="w-full" 
             size="lg"
@@ -151,8 +175,49 @@ const ResultsPanel = ({ results, isLoading, error }: ResultsPanelProps) => {
             <Download className="mr-2 h-5 w-5" />
             Download PDF Report
           </Button>
+          <Button 
+            variant="outline"
+            className="w-full" 
+            size="lg"
+            onClick={handleViewMrv}
+            disabled={loadingMrv}
+          >
+            <Database className="mr-2 h-5 w-5" />
+            {loadingMrv ? 'Loading...' : 'View MRV Data'}
+          </Button>
         </CardContent>
       </Card>
+
+      {/* MRV Data Modal */}
+      <Dialog open={showMrvModal} onOpenChange={setShowMrvModal}>
+        <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>MRV Data (Run ID: {results.run_id})</DialogTitle>
+            <DialogDescription>
+              Measurement, Reporting, and Verification data for this carbon calculation
+            </DialogDescription>
+          </DialogHeader>
+          {mrvData && (
+            <div className="space-y-4">
+              <div className="bg-muted p-4 rounded-lg">
+                <pre className="text-xs overflow-x-auto">
+                  {JSON.stringify(mrvData, null, 2)}
+                </pre>
+              </div>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  navigator.clipboard.writeText(JSON.stringify(mrvData, null, 2));
+                  toast.success('MRV data copied to clipboard');
+                }}
+                className="w-full"
+              >
+                Copy to Clipboard
+              </Button>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

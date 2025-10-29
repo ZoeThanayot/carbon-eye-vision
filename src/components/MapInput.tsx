@@ -3,19 +3,25 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-draw/dist/leaflet.draw.css';
 import 'leaflet-draw';
-import { Card } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
+import { MapPin, Pencil } from 'lucide-react';
 
 interface MapInputProps {
   onPolygonDrawn: (geojson: any) => void;
+  onTextInput: (text: string) => void;
   isLoading: boolean;
 }
 
-const MapInput = ({ onPolygonDrawn, isLoading }: MapInputProps) => {
+const MapInput = ({ onPolygonDrawn, onTextInput, isLoading }: MapInputProps) => {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
   const drawnItemsRef = useRef<L.FeatureGroup | null>(null);
+  const [textInput, setTextInput] = useState('');
 
   useEffect(() => {
     if (!mapRef.current || mapInstanceRef.current) return;
@@ -85,29 +91,78 @@ const MapInput = ({ onPolygonDrawn, isLoading }: MapInputProps) => {
     }
   };
 
+  const handleTextSubmit = () => {
+    if (!textInput.trim()) {
+      toast.error('Please enter an area name or coordinates');
+      return;
+    }
+    onTextInput(textInput.trim());
+    toast.success('Processing location...');
+  };
+
   return (
-    <Card className="p-4 h-full">
-      <div className="space-y-4 h-full flex flex-col">
-        <div className="flex items-center justify-between">
-          <h2 className="text-xl font-semibold">Select Area</h2>
-          <Button 
-            variant="outline" 
-            size="sm" 
-            onClick={clearDrawing}
-            disabled={isLoading}
-          >
-            Clear
-          </Button>
-        </div>
-        <div 
-          ref={mapRef} 
-          className="flex-1 rounded-lg border min-h-[400px] md:min-h-[600px]"
-          style={{ height: '100%' }}
-        />
-        <p className="text-sm text-muted-foreground">
-          Use the drawing tools to select a forest area for carbon analysis
-        </p>
-      </div>
+    <Card className="h-full flex flex-col">
+      <CardHeader>
+        <CardTitle>Select Area</CardTitle>
+      </CardHeader>
+      <CardContent className="flex-1 flex flex-col space-y-4">
+        <Tabs defaultValue="map" className="flex-1 flex flex-col">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="map" className="flex items-center gap-2">
+              <Pencil className="h-4 w-4" />
+              Draw on Map
+            </TabsTrigger>
+            <TabsTrigger value="text" className="flex items-center gap-2">
+              <MapPin className="h-4 w-4" />
+              Enter Location
+            </TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="map" className="flex-1 flex flex-col space-y-4 mt-4">
+            <div className="flex items-center justify-between">
+              <p className="text-sm text-muted-foreground">
+                Use drawing tools to select area
+              </p>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={clearDrawing}
+                disabled={isLoading}
+              >
+                Clear
+              </Button>
+            </div>
+            <div 
+              ref={mapRef} 
+              className="flex-1 rounded-lg border min-h-[400px]"
+            />
+          </TabsContent>
+          
+          <TabsContent value="text" className="flex-1 space-y-4 mt-4">
+            <div className="space-y-2">
+              <Label htmlFor="location-input">Area Name or Coordinates</Label>
+              <Input
+                id="location-input"
+                placeholder="e.g., Khao Yai National Park or 14.4426,101.3719"
+                value={textInput}
+                onChange={(e) => setTextInput(e.target.value)}
+                disabled={isLoading}
+                onKeyDown={(e) => e.key === 'Enter' && handleTextSubmit()}
+              />
+              <p className="text-xs text-muted-foreground">
+                Enter forest area name or coordinates (lat,lng format)
+              </p>
+            </div>
+            <Button 
+              onClick={handleTextSubmit} 
+              disabled={isLoading || !textInput.trim()}
+              className="w-full"
+            >
+              Submit Location
+            </Button>
+          </TabsContent>
+        </Tabs>
+      </CardContent>
     </Card>
   );
 };
