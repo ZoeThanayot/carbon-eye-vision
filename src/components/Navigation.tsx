@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Satellite, Globe, TrendingUp, Menu, Calculator } from "lucide-react";
+import { Satellite, Globe, TrendingUp, Menu, Calculator, MessageSquare } from "lucide-react";
 import { useState } from "react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useNavigate } from "react-router-dom";
@@ -12,6 +12,7 @@ const Navigation = () => {
   const navItems = [
     { label: "Home", href: "/", icon: Globe, isRoute: true },
     { label: "Calculator", href: "/calculator", icon: Calculator, isRoute: true },
+    { label: "AI Assistant", href: "/assistant", icon: MessageSquare, isRoute: true },
     { label: "Dashboard", href: "#dashboard", icon: TrendingUp },
     { label: "Marketplace", href: "#marketplace", icon: Satellite },
   ];

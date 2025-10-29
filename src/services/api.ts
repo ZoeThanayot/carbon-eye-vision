@@ -86,3 +86,22 @@ export const healthCheck = async (): Promise<{ status: string }> => {
     throw new Error('API is unavailable.');
   }
 };
+
+export const askAI = async (runId: string, question: string): Promise<{ answer: string }> => {
+  try {
+    const response = await axios.post(`${API_BASE_URL}/ask`, {
+      run_id: runId,
+      question: question
+    }, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(`AI Assistant Error: ${error.response?.data?.message || error.message}`);
+    }
+    throw new Error('Failed to get AI response. Please try again.');
+  }
+};

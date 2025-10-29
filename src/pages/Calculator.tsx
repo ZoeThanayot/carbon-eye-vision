@@ -38,6 +38,12 @@ const Calculator = () => {
     try {
       const result = await calculateCarbon(selectedPayload);
       setResults(result);
+      
+      // Store run_id for AI Assistant
+      if (result.run_id) {
+        localStorage.setItem("lastRunId", result.run_id);
+      }
+      
       toast.success('Carbon calculation completed!');
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to calculate carbon';
