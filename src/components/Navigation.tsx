@@ -1,16 +1,19 @@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Satellite, Globe, TrendingUp, Menu } from "lucide-react";
+import { Satellite, Globe, TrendingUp, Menu, Calculator } from "lucide-react";
 import { useState } from "react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { useNavigate } from "react-router-dom";
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
 
   const navItems = [
+    { label: "Home", href: "/", icon: Globe, isRoute: true },
+    { label: "Calculator", href: "/calculator", icon: Calculator, isRoute: true },
     { label: "Dashboard", href: "#dashboard", icon: TrendingUp },
-    { label: "Monitoring", href: "#monitoring", icon: Satellite },
-    { label: "Marketplace", href: "#marketplace", icon: Globe },
+    { label: "Marketplace", href: "#marketplace", icon: Satellite },
   ];
 
   return (
@@ -34,14 +37,25 @@ const Navigation = () => {
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-6">
             {navItems.map((item) => (
-              <a
-                key={item.label}
-                href={item.href}
-                className="flex items-center space-x-2 text-foreground hover:text-primary transition-colors"
-              >
-                <item.icon className="h-4 w-4" />
-                <span>{item.label}</span>
-              </a>
+              item.isRoute ? (
+                <button
+                  key={item.label}
+                  onClick={() => navigate(item.href)}
+                  className="flex items-center space-x-2 text-foreground hover:text-primary transition-colors"
+                >
+                  <item.icon className="h-4 w-4" />
+                  <span>{item.label}</span>
+                </button>
+              ) : (
+                <a
+                  key={item.label}
+                  href={item.href}
+                  className="flex items-center space-x-2 text-foreground hover:text-primary transition-colors"
+                >
+                  <item.icon className="h-4 w-4" />
+                  <span>{item.label}</span>
+                </a>
+              )
             ))}
           </div>
 
@@ -68,15 +82,29 @@ const Navigation = () => {
             <SheetContent side="right" className="bg-card border-card-border">
               <div className="flex flex-col space-y-6 mt-6">
                 {navItems.map((item) => (
-                  <a
-                    key={item.label}
-                    href={item.href}
-                    className="flex items-center space-x-3 text-foreground hover:text-primary transition-colors"
-                    onClick={() => setIsOpen(false)}
-                  >
-                    <item.icon className="h-5 w-5" />
-                    <span className="text-lg">{item.label}</span>
-                  </a>
+                  item.isRoute ? (
+                    <button
+                      key={item.label}
+                      onClick={() => {
+                        navigate(item.href);
+                        setIsOpen(false);
+                      }}
+                      className="flex items-center space-x-3 text-foreground hover:text-primary transition-colors text-left"
+                    >
+                      <item.icon className="h-5 w-5" />
+                      <span className="text-lg">{item.label}</span>
+                    </button>
+                  ) : (
+                    <a
+                      key={item.label}
+                      href={item.href}
+                      className="flex items-center space-x-3 text-foreground hover:text-primary transition-colors"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      <item.icon className="h-5 w-5" />
+                      <span className="text-lg">{item.label}</span>
+                    </a>
+                  )
                 ))}
                 <div className="pt-4 border-t border-card-border space-y-3">
                   <Button variant="outline" size="sm" className="w-full">
