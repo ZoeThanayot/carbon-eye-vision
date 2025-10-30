@@ -104,15 +104,15 @@ const ResultsPanel = ({ results, isLoading, error }: ResultsPanelProps) => {
           <div className="grid grid-cols-3 gap-4">
             <div>
               <p className="text-sm text-muted-foreground">Mean</p>
-              <p className="text-2xl font-bold">{results.ndvi_mean.toFixed(3)}</p>
+              <p className="text-2xl font-bold">{results.ndvi_mean?.toFixed(3) ?? 'N/A'}</p>
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Std Dev</p>
-              <p className="text-2xl font-bold">{results.ndvi_stdDev.toFixed(3)}</p>
+              <p className="text-2xl font-bold">{results.ndvi_stdDev?.toFixed(3) ?? 'N/A'}</p>
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Area (ha)</p>
-              <p className="text-2xl font-bold">{results.area_ha.toFixed(2)}</p>
+              <p className="text-2xl font-bold">{results.area_ha?.toFixed(2) ?? 'N/A'}</p>
             </div>
           </div>
         </CardContent>
@@ -132,19 +132,19 @@ const ResultsPanel = ({ results, isLoading, error }: ResultsPanelProps) => {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <p className="text-sm text-muted-foreground">Biomass</p>
-                <p className="text-xl font-bold">{results.biomass_tons.toFixed(2)} tons</p>
+                <p className="text-xl font-bold">{results.biomass_tons?.toFixed(2) ?? 'N/A'} tons</p>
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Carbon</p>
-                <p className="text-xl font-bold">{results.carbon_tons.toFixed(2)} tons</p>
+                <p className="text-xl font-bold">{results.carbon_tons?.toFixed(2) ?? 'N/A'} tons</p>
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">CO₂e</p>
-                <p className="text-xl font-bold">{results.co2e_tons.toFixed(2)} tons</p>
+                <p className="text-xl font-bold">{results.co2e_tons?.toFixed(2) ?? 'N/A'} tons</p>
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Carbon Credits</p>
-                <p className="text-xl font-bold text-primary">{results.carbon_credits.toFixed(2)}</p>
+                <p className="text-xl font-bold text-primary">{results.carbon_credits?.toFixed(2) ?? 'N/A'}</p>
               </div>
             </div>
           </div>
