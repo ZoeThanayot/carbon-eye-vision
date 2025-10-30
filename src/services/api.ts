@@ -5,14 +5,23 @@ const API_BASE_URL = 'https://24c4a8e64616.ngrok-free.app';
 export interface CarbonCalculationResult {
   run_id: string;
   ndvi_mean: number;
-  ndvi_stdDev: number;
+  ndvi_std: number;
   area_ha: number;
-  biomass_tons: number;
-  carbon_tons: number;
-  co2e_tons: number;
-  carbon_credits: number;
+  biomass: number;
+  total_biomass_t?: number;
+  carbon: number;
+  total_carbon_t?: number;
+  co2e: number;
+  total_co2e_t?: number;
+  credits: number;
+  estimated_credits?: number;
   explanation: string;
   report_url: string;
+  analysis_period?: {
+    start: string;
+    end: string;
+  };
+  data_source?: string;
 }
 
 export interface RunData {
@@ -20,12 +29,12 @@ export interface RunData {
   timestamp: string;
   geojson: any;
   ndvi_mean: number;
-  ndvi_stdDev: number;
+  ndvi_std: number;
   area_ha: number;
-  biomass_tons: number;
-  carbon_tons: number;
-  co2e_tons: number;
-  carbon_credits: number;
+  biomass: number;
+  carbon: number;
+  co2e: number;
+  credits: number;
   explanation: string;
 }
 
